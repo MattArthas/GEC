@@ -1,6 +1,0 @@
-create sequence GEC_CROSS_TRADE_ID_SEQ
-minvalue 1
-maxvalue 9999999999999999999999999999
-start with 1
-INCREMENT BY 1
-cache 20;

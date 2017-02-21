@@ -1,7 +1,0 @@
-create sequence GEC_CONTRACT_OWNER_SEQ
-minvalue 1
-maxvalue 9999999
-start with 1
-increment by 1
-cache 20
-cycle;
