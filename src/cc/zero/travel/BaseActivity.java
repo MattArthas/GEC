@@ -30,8 +30,6 @@ public abstract class BaseActivity extends Activity {
 		fillData(); 
     }  
   
-
-    
 	public abstract void setupView();
 	public abstract void setListener();
 	public abstract void fillData();
