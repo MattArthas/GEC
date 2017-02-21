@@ -1,0 +1,31 @@
+CREATE TABLE GEC_G1_MESSAGE
+(
+  G1_MESSAGE_ID	            NUMBER(38),
+  MESSAGE_TYPE      	    VARCHAR2(4), 
+  JMS_MESSAGE_ID	        VARCHAR2(100),
+  JMS_MESSAGE_TIMESTAMP	    TIMESTAMP(3),
+  STATUS	                VARCHAR2(1) NOT NULL,
+  STATUS_MSG	            VARCHAR2(500),
+  MESSAGE_CONTENT	        BLOB,
+  IN_OUT	                VARCHAR2(1),
+  CREATED_AT	            DATE,
+  CREATED_BY	            VARCHAR2(64),
+  LAST_UPDATED_BY           VARCHAR2(64),
+  LAST_UPDATED_AT           DATE
+)TABLESPACE GEC
+LOB(MESSAGE_CONTENT) STORE AS GEC_G1_MESSAGE_LS(TABLESPACE GEC);
+
+COMMENT ON TABLE GEC_G1_MESSAGE
+  IS 'This table is to store the message with G1.';
+COMMENT ON COLUMN   GEC_G1_MESSAGE.STATUS
+  IS 'Value is F-ail/S-uccess/N-ew, for sending message, new message set status as N-ew,if sending message 
+  sucessfully, set status as S else set F, for receiving message, 
+  if the message is received, set status as N-ew, if it is proceed sucessfully, set status as S else set status F';  
+COMMENT ON COLUMN   GEC_G1_MESSAGE.STATUS_MSG  
+  IS 'It is the specific description of STATUS.';
+COMMENT ON COLUMN   GEC_G1_MESSAGE.IN_OUT
+  IS 'Value is I-n/O-ut, it means the message is received or sent.';
+
+ALTER TABLE GEC_G1_MESSAGE ADD CONSTRAINTS GEC_G1_MESSAGE_PK
+PRIMARY KEY(G1_MESSAGE_ID) USING INDEX TABLESPACE GEC;     
+CREATE UNIQUE INDEX GEC_G1_MESSAGE_UK1 ON GEC_G1_MESSAGE(JMS_MESSAGE_ID,JMS_MESSAGE_TIMESTAMP) TABLESPACE GEC;

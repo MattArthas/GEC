@@ -1,0 +1,55 @@
+create table GEC_BROKER
+(
+  BROKER_ID              NUMBER(10) not null,
+  BROKER_CD              VARCHAR2(6) not null,
+  BROKER_NAME            VARCHAR2(100),
+  BORROW_REQUEST_TYPE    VARCHAR2(250),
+  COLLATERAL_CURRENCY_CD VARCHAR2(3),
+  COLLATERAL_TYPE        VARCHAR2(10),
+  US_COLLATERAL_PERCENTAGE  	NUMBER(7,6),
+  NONUS_COLLATERAL_PERCENTAGE   NUMBER(7,6),
+  AGENCY_FLAG            VARCHAR2(1) not null,
+  NON_CASH_AGENCY_FLAG   VARCHAR2(1) default 'N' not null ,
+  BOOK_G1_BORROW_FLAG    VARCHAR2(1) not null,
+  US_PRICE_ROUND_FACTOR     NUMBER(3),
+  NON_US_PRICE_ROUND_FACTOR NUMBER(3),
+  CA_PRICE_ROUND_FACTOR     NUMBER(3),
+  NOU_US_DPS                NUMBER(3),
+  CA_DPS                    NUMBER(3),
+  LEGAL_ENTITY_ID        NUMBER(10),
+  BRANCH_CD              VARCHAR2(10),
+  CREATED_AT             DATE default sysdate,
+  CREATED_BY             VARCHAR2(64),
+  UPDATED_AT             DATE,
+  UPDATED_BY             VARCHAR2(64),
+  CORP_ID					NUMBER(10),
+  AUTO_RETURN_FLAG 			VARCHAR2(1) default 'N' not null,
+  LEGAL_ENTITY_CD	        VARCHAR2(40) default 'SSBT',
+  G1_INSTANCE_CD			VARCHAR2(40) default 'SSBT',
+  LAST_UPDATED_AT        	DATE,
+  LAST_UPDATED_BY        	VARCHAR2(64)
+) tablespace GEC;
+
+comment on column GEC_BROKER.AGENCY_FLAG
+  is 'Y/N';
+comment on column GEC_BROKER.BOOK_G1_BORROW_FLAG
+  is 'Y/N';
+comment on column GEC_BROKER.NON_CASH_AGENCY_FLAG
+  is 'Y/N';  
+comment on column GEC_BROKER.US_PRICE_ROUND_FACTOR
+  is 'It is used for US.Values: 1, 5, 10, 25, 50, 100. Cent (1 Cent), Nickel (5 Cents), Dime (10 cents), Quarter (25 cents), Half Dollar (50 Cents), Dollar (100 Cents)';
+comment on column GEC_BROKER.NON_US_PRICE_ROUND_FACTOR
+  is 'Same with US_PRICE_ROUND_FACTOR, it is used for NON_US trade country exclude CA.';
+comment on column GEC_BROKER.CA_PRICE_ROUND_FACTOR
+  is 'Same with US_PRICE_ROUND_FACTOR, it is used for CA trade country.';
+comment on column GEC_BROKER.AUTO_RETURN_FLAG
+  is 'Check box field to identify if the counterparty supports automated EquiLend returns processing or not.';
+comment on column GEC_BROKER.G1_INSTANCE_CD
+  is 'Refer to GEC_G1_INSTANCE table.';  
+    
+ALTER TABLE GEC_BROKER
+  ADD CONSTRAINT GEC_BROKER_PK PRIMARY KEY (BROKER_ID)  USING INDEX TABLESPACE  GEC;
+
+alter table GEC_BROKER
+  add constraint GEC_BROKER_UK unique (BROKER_CD)  USING INDEX TABLESPACE GEC;
+

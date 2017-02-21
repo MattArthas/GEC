@@ -1,0 +1,21 @@
+create table GEC_EQL_ABREASON_DESC
+(
+	EQL_ABREASON_DESC_ID	NUMBER(10),	
+	EQL_ABREASON_CD	        VARCHAR2(2)	NOT NULL,
+	EQL_ABREASON_DESC	    VARCHAR2(50) NOT NULL,	
+	LAST_UPDATED_AT	        DATE,
+	LAST_UPDATED_BY 	    VARCHAR2(64)
+)tablespace GEC;
+
+comment on table GEC_EQL_ABREASON_DESC 
+  is 'This table is to give the description of equilend"s abreason code, it is used in the reject process';
+comment on column GEC_EQL_ABREASON_DESC.EQL_ABREASON_CD
+  is 'Equilend"s abreason code,Value is "AV, NA, NC, CU, TU, OC"';
+comment on column GEC_EQL_ABREASON_DESC.EQL_ABREASON_DESC
+  is 'Equilend"s abreason description';
+   
+ALTER TABLE GEC_EQL_ABREASON_DESC ADD CONSTRAINTS GEC_EQL_ABREASON_DESC_PK
+    PRIMARY KEY(EQL_ABREASON_DESC_ID) USING INDEX  TABLESPACE GEC;
+ALTER TABLE GEC_EQL_ABREASON_DESC ADD CONSTRAINTS GEC_EQL_ABREASON_DESC_UK
+    UNIQUE(EQL_ABREASON_CD) USING INDEX TABLESPACE  GEC;
+ 

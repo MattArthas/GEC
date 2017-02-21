@@ -1,0 +1,5 @@
+create or replace
+FUNCTION GEC_NO_DUP_STRACAT_FNC(input varchar2 )   
+RETURN varchar2    
+AGGREGATE USING GEC_NO_DUP_STRCAT_TYPE;
+/

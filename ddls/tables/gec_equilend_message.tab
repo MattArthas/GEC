@@ -1,0 +1,41 @@
+create table GEC_EQUILEND_MESSAGE
+(
+	EQUILEND_MESSAGE_ID	  NUMBER(38),
+	MESSAGE_TYPE	      VARCHAR2(4),
+	MESSAGE_SUB_TYPE	  VARCHAR2(8),
+	EQL_PROGRAM_REF	      VARCHAR2(10),
+	JMS_MESSAGE_ID	      VARCHAR2(100),
+	JMS_MESSAGE_TIMESTAMP TIMESTAMP(3),
+	STATUS	              VARCHAR2(1) not null,		
+	STATUS_MSG			  VARCHAR2(500),	
+	MESSAGE_CONTENT	      BLOB,
+	IN_OUT	              VARCHAR2(1),
+	CREATED_AT	          DATE,
+	CREATED_BY	          VARCHAR2(64),
+	LAST_UPDATED_AT	      DATE,
+	LAST_UPDATED_BY	      VARCHAR2(64)
+)tablespace GEC
+LOB(MESSAGE_CONTENT) STORE AS GEC_EQUILEND_MESSAGE_LS(TABLESPACE GEC);
+
+COMMENT ON TABLE GEC_EQUILEND_MESSAGE
+  IS 'This table is to store the message with Equilend.';
+COMMENT ON COLUMN   GEC_EQUILEND_MESSAGE.MESSAGE_TYPE
+  IS 'It is the type of the message. Value is AGAC,ABIN,AVPO,DABS,DREQ,ERPA,MCRU,ORAC,OOIN,SHTT ';
+COMMENT ON COLUMN   GEC_EQUILEND_MESSAGE.MESSAGE_SUB_TYPE
+  IS 'It is the sub type of the message. Value is ABBACA,ABBACACO,ABSB,ABEB,IN,PO,DO,ABSC,ABCR,NO,ABRECO,ABCACO,ABINCO,ABNO.';
+COMMENT ON COLUMN   GEC_EQUILEND_MESSAGE.EQL_PROGRAM_REF
+  IS 'It is the a unique indentifier of the message, equilend will send this value to GEC again, but it can not be used in every type message.';
+COMMENT ON COLUMN   GEC_EQUILEND_MESSAGE.STATUS
+  IS 'Value is F-ail/S-uccess/N-ew, for sending message, new message set status as N-ew,if sending message 
+  sucessfully, set status as S else set F, for receiving message, 
+  if the message is received, set status as N-ew, if it is proceed sucessfully, set status as S else set status F';  
+COMMENT ON COLUMN   GEC_EQUILEND_MESSAGE.STATUS_MSG  
+  IS 'It is the specific description of STATUS.';
+COMMENT ON COLUMN   GEC_EQUILEND_MESSAGE.IN_OUT
+  IS 'Value is I-n/O-ut, it means the message is received or sent.';
+
+ALTER TABLE GEC_EQUILEND_MESSAGE ADD CONSTRAINTS GEC_EQUILEND_MESSAGE_PK
+  PRIMARY KEY(EQUILEND_MESSAGE_ID) USING INDEX TABLESPACE GEC;     
+CREATE UNIQUE INDEX GEC_EQUILEND_MESSAGE_UK1 ON GEC_EQUILEND_MESSAGE(JMS_MESSAGE_ID,JMS_MESSAGE_TIMESTAMP) TABLESPACE GEC;
+CREATE INDEX GEC_EQUILEND_MESSAGE_IDX1 ON GEC_EQUILEND_MESSAGE(EQL_PROGRAM_REF) TABLESPACE GEC;
+  

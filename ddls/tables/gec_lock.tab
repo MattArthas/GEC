@@ -1,0 +1,17 @@
+create table GEC_LOCK
+(
+  LOCK_NAME   VARCHAR2(64) not null,
+  LOCK_DESC	  VARCHAR2(512), 
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+)TABLESPACE GEC
+;
+alter table GEC_LOCK
+  add ( constraint GEC_LOCK_PK primary key (LOCK_NAME)  USING INDEX  TABLESPACE GEC);
+
+comment on table GEC_LOCK
+  is 'Collection for locks.';
+comment on column GEC_LOCK.LOCK_NAME
+  is 'Lock name.';  
+comment on column GEC_LOCK.LOCK_DESC
+  is 'Lock description';  

@@ -1,0 +1,15 @@
+create table GEC_APPLICATION_PROPERTIES
+(
+	PROP_GROUP varchar2(30) not null,
+	KEY varchar2(30) not null,
+	VALUE varchar2(512),
+	LAST_UPDATED_BY VARCHAR2(64),
+  	LAST_UPDATED_AT DATE
+) tablespace GEC
+;
+create unique index GEC_APPLICATION_IDX1 ON GEC_APPLICATION_PROPERTIES(PROP_GROUP,KEY) TABLESPACE GEC ;
+comment on column GEC_APPLICATION_PROPERTIES.PROP_GROUP
+  is 'group of property';
+comment on column GEC_APPLICATION_PROPERTIES.KEY
+  is 'Map to property''s key';
+comment on column GEC_APPLICATION_PROPERTIES.VALUE is 'Map to property''s value';

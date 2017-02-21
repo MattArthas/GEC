@@ -1,0 +1,19 @@
+create table GEC_BORROW_REQUEST_TYPE
+(
+  BORROW_REQUEST_TYPE_ID NUMBER(10) not null,
+  BORROW_REQUEST_TYPE    VARCHAR2(250) not null,
+  ALLOCATION_ORDER       NUMBER(5),
+  LAST_UPDATED_AT        DATE,
+  LAST_UPDATED_BY        VARCHAR2(64)
+)tablespace GEC;
+
+comment on column GEC_BORROW_REQUEST_TYPE.BORROW_REQUEST_TYPE
+  is 'SB,NSB,Equilend,Report,Other';
+comment on column GEC_BORROW_REQUEST_TYPE.ALLOCATION_ORDER
+  is 'Value eg: 1, 2, 3 or 4. When executing the allocation for every run, system should firstly allocate the Borrow quantity from SB source then from the NSB source and then from equilend source Brokers and then from the remaining brokers.';
+
+ALTER TABLE GEC_BORROW_REQUEST_TYPE
+  ADD( CONSTRAINT GEC_BORROW_REQUEST_TYPE_PK PRIMARY KEY (BORROW_REQUEST_TYPE_ID)  USING INDEX TABLESPACE  GEC);
+
+alter table GEC_BORROW_REQUEST_TYPE
+  add ( constraint GEC_BORROW_REQUEST_TYPE_UK unique (BORROW_REQUEST_TYPE)  USING INDEX TABLESPACE  GEC);

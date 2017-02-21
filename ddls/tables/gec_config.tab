@@ -1,0 +1,20 @@
+create table GEC_CONFIG
+(
+  ATTR_GROUP      VARCHAR2(30) not null,
+  ATTR_NAME       VARCHAR2(30) not null,
+  ATTR_DATATYPE   VARCHAR2(1) not null,
+  ATTR_VALUE_TYPE VARCHAR2(1) not null,
+  ATTR_VALUE1     VARCHAR2(512),
+  ATTR_VALUE2     VARCHAR2(512),
+  CONFIG_COMMENT  VARCHAR2(250),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+)TABLESPACE GEC
+;
+comment on column GEC_CONFIG.ATTR_DATATYPE
+  is 'Type of the data. N: Long, F: Float, S: String, D: Date';
+comment on column GEC_CONFIG.ATTR_VALUE_TYPE
+  is 'Type of configure values. R: Range values, S: Single value.';
+alter table GEC_CONFIG
+  add ( constraint GEC_CONFIG_PK primary key (ATTR_GROUP, ATTR_NAME) USING INDEX  TABLESPACE GEC);
+

@@ -1,0 +1,11 @@
+create table GEC_ERROR_AUD
+(
+  ERROR_ID        NUMBER(10),
+  ERROR_CODE      VARCHAR2(10),
+  SOP_URL         VARCHAR2(500),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE,
+  OP_CODE         CHAR(1)
+)
+tablespace GEC;
+

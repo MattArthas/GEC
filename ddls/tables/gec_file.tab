@@ -1,0 +1,43 @@
+CREATE TABLE GEC_FILE
+(
+  FILE_ID   			NUMBER(38) NOT NULL,
+  REQUEST_ID			NUMBER(38),
+  FILE_NAME				VARCHAR2(255),
+  SEQ_NUM           	NUMBER(6),
+  SCHEDULED_AT			DATE,
+  FILE_SOURCE			VARCHAR2(10),
+  FILE_TYPE				VARCHAR2(16),  
+  STATUS            	VARCHAR2(1), 
+  STATUS_MSG            VARCHAR2(50),
+  COMMENT_TXT       	VARCHAR2(4000),
+  FILE_CONTENT			BLOB,
+  CREATED_BY			VARCHAR2(64),
+  CREATED_AT			DATE,
+  UPDATED_BY			VARCHAR2(64),
+  UPDATED_AT			DATE,
+  LAST_UPDATED_BY		VARCHAR2(64),
+  LAST_UPDATED_AT		DATE
+)  TABLESPACE GEC
+LOB(FILE_CONTENT) STORE AS GEC_FILE_LS(TABLESPACE GEC)
+;
+ALTER TABLE GEC_FILE
+  ADD( CONSTRAINT GEC_FILE_PK PRIMARY KEY (FILE_ID)  USING INDEX TABLESPACE  GEC);
+
+comment on column GEC_FILE.SEQ_NUM
+  is 'sequence for the same file name.Begin with 0.';  
+comment on column GEC_FILE.REQUEST_ID
+  is 'If FILE_TYPE is RES/REQ, the REQUEST_ID is GEC_BORROW_REQUEST.BORROW_REQUEST_ID, else it is GEC_REQUEST.REQUEST_ID.';  
+comment on column GEC_FILE.FILE_SOURCE
+  is 'Values: SMAC/GSMAC/ST/PGP'; 
+comment on column GEC_FILE.FILE_TYPE
+  is 'RESPONSE,UNKNOWN,ORDER,LOCATE'; 
+comment on column GEC_FILE.STATUS
+  is 'R:Resolved; P:pending; S:Success; F:Failed; M:Pending for traders; C:Completed(SHORTSB response sent out successfully).'; 
+comment on column GEC_FILE.SEQ_NUM
+  is 'For ST file, it is the time order that the files arrived GEC. For Equilend availability file, it is the sequence number that GEC send file to DML.'; 
+
+  
+  
+
+  
+  

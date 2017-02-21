@@ -1,0 +1,28 @@
+create table GEC_CHAT_SESSION
+(
+  CHAT_SESSION_ID  NUMBER(38) not null,
+  INITIATE_USER_ID VARCHAR2(64),
+  INITIATE_TIME    DATE,
+  ACCEPT_USER_ID   VARCHAR2(64),
+  ACCEPT_TIME      DATE,
+  CLOSE_USER_ID    VARCHAR2(64),
+  CLOSE_TIME       DATE,
+  STATUS           VARCHAR2(1),
+  LAST_UPDATED_BY  VARCHAR2(64),
+  LAST_UPDATED_AT  DATE
+)TABLESPACE GEC
+;
+alter table GEC_CHAT_SESSION
+  add ( constraint GEC_CHAT_SESSION_PK primary key (CHAT_SESSION_ID) USING INDEX TABLESPACE GEC );
+
+comment on column GEC_CHAT_SESSION.CHAT_SESSION_ID
+  is 'CHAT SESSION ID';
+comment on column GEC_CHAT_SESSION.INITIATE_USER_ID
+  is 'The user who requests this chat.';
+comment on column GEC_CHAT_SESSION.ACCEPT_USER_ID
+  is 'The user who accept this chat request.';
+comment on column GEC_CHAT_SESSION.CLOSE_USER_ID
+  is 'The user who closes this chat.';
+comment on column GEC_CHAT_SESSION.STATUS
+  is 'W: new chat session and wait for trader accepting;A: Accepted by trader;S: chat session is ended successfully;F: not one accept and IM end it by himself;E: no one ends the chat session and http session is destroyed usually because of session timeout;X: no one ends the chat session and daily DB job.';
+

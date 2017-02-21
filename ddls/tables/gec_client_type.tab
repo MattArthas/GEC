@@ -1,0 +1,15 @@
+create table GEC_CLIENT_TYPE
+(
+  CLIENT_TYPE      VARCHAR2(3) not null,
+  CLIENT_TYPE_DESC VARCHAR2(20 BYTE),
+  LAST_UPDATED_BY  VARCHAR2(64 BYTE),
+  LAST_UPDATED_AT  DATE
+)TABLESPACE GEC
+;
+alter table GEC_CLIENT_TYPE
+  add ( constraint GEC_CLIENT_TYPE_PK primary key (CLIENT_TYPE) USING INDEX  TABLESPACE GEC) ;
+
+comment on table GEC_CLIENT_TYPE
+  is 'User Type Table';
+comment on column GEC_CLIENT_TYPE.CLIENT_TYPE
+  is 'INT(Internal),EXT(External)';

@@ -1,0 +1,16 @@
+create table GEC_INDEX
+(
+  INDEX_CD        VARCHAR2(4) not null,
+  INDEX_DESC      VARCHAR2(30),
+  G1_INDEX_CD     VARCHAR2(4),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+)TABLESPACE GEC
+;
+alter table GEC_INDEX
+  add ( constraint GEC_INDEX_PK primary key (INDEX_CD)  USING INDEX  TABLESPACE GEC);
+
+comment on table GEC_INDEX
+  is 'Index table.';
+comment on column GEC_INDEX.INDEX_CD
+  is 'N/A,FEDO,DFLT.';

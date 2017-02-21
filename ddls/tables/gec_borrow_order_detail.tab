@@ -1,0 +1,25 @@
+create table GEC_BORROW_ORDER_DETAIL
+(
+  BORROW_ORDER_ID NUMBER(38) not null,
+  IM_ORDER_ID     NUMBER(38) not null,
+  FULL_FILLED_QTY NUMBER(38),
+  REQUEST_QTY     NUMBER(38),
+  FILLED_QTY      NUMBER(38),
+  LAST_UPDATED_AT DATE,
+  LAST_UPDATED_BY VARCHAR2(64)
+)tablespace GEC;
+
+comment on column GEC_BORROW_ORDER_DETAIL.FULL_FILLED_QTY
+  is 'It is the filled qty before this time of exporting borrow request.';
+
+alter table GEC_BORROW_ORDER_DETAIL
+  add ( constraint GEC_BORROW_ORDER_DETAIL_PK primary key (BORROW_ORDER_ID,IM_ORDER_ID) USING INDEX TABLESPACE GEC ) ;
+  
+alter table GEC_BORROW_ORDER_DETAIL
+  add constraint GEC_BORROW_ORDER_DETAIL_FK1 foreign key (BORROW_ORDER_ID)
+  references GEC_BORROW_ORDER(BORROW_ORDER_ID);     
+  
+alter table GEC_BORROW_ORDER_DETAIL
+  add constraint GEC_BORROW_ORDER_DETAIL_FK2 foreign key (IM_ORDER_ID)
+  references GEC_IM_ORDER(IM_ORDER_ID);     
+  

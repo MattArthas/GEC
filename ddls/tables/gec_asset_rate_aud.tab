@@ -1,0 +1,19 @@
+create table GEC_ASSET_RATE_AUD
+(
+  ASSET_ID             NUMBER(38),
+  ASSET_CODE           VARCHAR2(20),
+  ASSET_CODE_TYPE      VARCHAR2(3),
+  INDICATIVE_RATE      NUMBER(9,6),
+  POSITION_FLAG        VARCHAR2(2),
+  RESTRICTION_CD       VARCHAR2(1),
+  TYPE                 VARCHAR2(1),
+  INTERNAL_COMMENT_TXT VARCHAR2(4000),
+  STATUS               VARCHAR2(1),
+  UPDATED_BY           VARCHAR2(64),
+  UPDATED_AT           DATE,
+  LAST_UPDATED_BY      VARCHAR2(64),
+  LAST_UPDATED_AT      DATE,
+  OP_CODE              CHAR(1)
+)
+tablespace GEC;
+

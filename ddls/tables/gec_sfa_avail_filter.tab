@@ -1,0 +1,22 @@
+CREATE TABLE GEC_SFA_AVAIL_FILTER
+(
+SFA_AVAIL_FILTER_ID	NUMBER(38),
+FUND_CD	VARCHAR2(4),
+TRADE_COUNTRY_CDS	VARCHAR2(512),
+STATUS	VARCHAR2(1),
+AVAILABILITY_REGION       VARCHAR2(20),
+LAST_UPDATED_AT	DATE,
+LAST_UPDATED_BY	VARCHAR2(64)
+) TABLESPACE GEC
+;
+
+COMMENT ON TABLE GEC_SFA_AVAIL_FILTER
+  IS 'This table is used for config fund list for SFA availability load.';
+COMMENT ON COLUMN GEC_SFA_AVAIL_FILTER.FUND_CD
+  IS 'Config fund for SFA Lender’s availability when load DML BOS load.';
+COMMENT ON COLUMN GEC_SFA_AVAIL_FILTER.TRADE_COUNTRY_CDS
+  IS 'Config trade country list for SFA Lender’s availability when load DML BOS load. Separated with comma.';  
+COMMENT ON COLUMN GEC_SFA_AVAIL_FILTER.STATUS
+  is 'Value:W,B. Whitelist of trade country for W, Blacklist of trade country for B.';
+ALTER TABLE GEC_SFA_AVAIL_FILTER
+  add ( constraint GEC_SFA_AVAIL_FILTER_PK primary key (SFA_AVAIL_FILTER_ID) USING INDEX TABLESPACE GEC);

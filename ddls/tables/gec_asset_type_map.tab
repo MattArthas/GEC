@@ -1,0 +1,23 @@
+create table GEC_ASSET_TYPE_MAP
+(
+	MAP_ID					NUMBER(38),
+	ASSET_TYPE_ID			VARCHAR2(1),
+	TRADE_COUNTRY_CD		VARCHAR2(8),
+	LOAD_DATA_FLAG			VARCHAR2(1),
+  	UPDATED_BY				VARCHAR2(64),
+  	UPDATED_AT				DATE,
+  	LAST_UPDATED_BY   		VARCHAR2(64),
+  	LAST_UPDATED_AT   		DATE
+) tablespace GEC
+;
+
+comment on column GEC_ASSET_TYPE_MAP.ASSET_TYPE_ID 
+	is 'FK to gec_asset_type.asset_type.'; 
+comment on column GEC_ASSET_TYPE_MAP.LOAD_DATA_FLAG 
+	is 'Values:Y-es,N-o.'; 
+comment on column GEC_ASSET_TYPE_MAP.TRADE_COUNTRY_CD 
+	is 'TRADE COUNTRY CODE. VALUES:US, CA, NON-US.'; 
+	
+alter table GEC_ASSET_TYPE_MAP
+  add ( constraint GEC_ASSET_TYPE_MAP_PK primary key (MAP_ID) USING INDEX TABLESPACE GEC ) ;
+	

@@ -1,0 +1,16 @@
+create table GEC_ERROR
+(
+  ERROR_ID  NUMBER(10) not null,
+  ERROR_CODE VARCHAR2(10),
+  SOP_URL   VARCHAR2(500),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+) TABLESPACE GEC
+;
+alter table GEC_ERROR
+  add ( constraint GEC_ERROR_PK primary key (ERROR_ID) USING INDEX TABLESPACE GEC );
+ALTER TABLE GEC_ERROR
+  ADD ( constraint GEC_ERROR_UK unique (ERROR_CODE)  USING INDEX TABLESPACE  GEC);	
+
+comment on column GEC_ERROR.ERROR_ID
+  is 'internal sequence ID, it does not have business meaning.';

@@ -1,0 +1,22 @@
+create table GEC_LEGAL_ENTITY
+(
+  LEGAL_ENTITY_ID	number(10) not null,
+  LEGAL_ENTITY_CD	varchar2(40),
+  LEGAL_ENTITY_TYPE	varchar2(10),
+  LEGAL_ENTITY_DESC	varchar2(256),
+  LAST_UPDATED_AT	date,
+  LAST_UPDATED_BY	varchar2(64)
+)tablespace GEC;
+
+comment on table GEC_LEGAL_ENTITY
+  IS 'This table is used store Legal Entity information in GEC.';
+comment on column GEC_LEGAL_ENTITY.LEGAL_ENTITY_CD
+  IS 'Values: SSBT, GmbH.';
+comment on column GEC_LEGAL_ENTITY.LEGAL_ENTITY_TYPE
+  IS 'Values: INT, EXT.';
+
+alter table GEC_LEGAL_ENTITY
+  add constraint GEC_LEGAL_ENTITY_PK primary key (LEGAL_ENTITY_ID)  using index tablespace  GEC;
+  
+alter table GEC_LEGAL_ENTITY
+  add constraint GEC_LEGAL_ENTITY_UK1 unique (LEGAL_ENTITY_CD)  USING INDEX TABLESPACE GEC;

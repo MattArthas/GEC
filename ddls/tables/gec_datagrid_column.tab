@@ -1,0 +1,33 @@
+create table GEC_DATAGRID_COLUMN
+(
+  DATAGRID_ID     VARCHAR2(50) not null,
+  COLUMN_ID       VARCHAR2(50) not null,
+  HEADER_TEXT     VARCHAR2(64),
+  DISPLAY_WIDTH   NUMBER(4),
+  SORTABLE_FLAG   CHAR(1),
+  MANDATORY_FLAG  CHAR(1),
+  MANAGE_FLAG     CHAR(1),
+  VISIBLE_FLAG    CHAR(1),
+  DISPLAY_ORDER   NUMBER(3),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+)TABLESPACE GEC
+;
+alter table GEC_DATAGRID_COLUMN
+  add ( constraint GEC_DATAGRID_COLUMN_PK primary key (DATAGRID_ID, COLUMN_ID)  USING INDEX  TABLESPACE GEC);
+alter table GEC_DATAGRID_COLUMN
+add constraint GEC_DATAGRID_COLUMN_FK1 foreign key (COLUMN_ID)
+  references GEC_COLUMN (COLUMN_ID);
+alter table GEC_DATAGRID_COLUMN
+  add constraint GEC_DATAGRID_COLUMN_FK2 foreign key (DATAGRID_ID)
+  references GEC_DATAGRID (DATAGRID_ID);
+
+comment on column GEC_DATAGRID_COLUMN.VISIBLE_FLAG
+  is 'default display in UI if user have no preference.';
+comment on column GEC_DATAGRID_COLUMN.MANAGE_FLAG
+  is 'If N, never display, and not in manage column component.';
+comment on column GEC_DATAGRID_COLUMN.MANDATORY_FLAG
+  is 'Y or N. Y:Must render on UI and can not be removed. N: Can be removed from UI.';
+comment on column GEC_DATAGRID_COLUMN.DISPLAY_ORDER
+  is 'E.G.1,2,3.Display order from left to right on UI.';
+  

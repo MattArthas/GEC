@@ -1,0 +1,36 @@
+CREATE TABLE GEC_BROKER_RETURN_RULE
+(
+  BROKER_RETURN_RULE_ID	  NUMBER(38),
+  BROKER_CD	              VARCHAR2(6) not null,
+  TRADE_COUNTRY_CD	      VARCHAR2(3) not null,
+  AUTO_RETURN_FLAG	      VARCHAR2(1) default 'N' not null,
+  DIVIDEND_RATE_TAG	      VARCHAR2(1),
+  COLLATERAL_TYPE_TAG	    VARCHAR2(1),
+  COLLATERAL_CURRENCY_TAG	VARCHAR2(1),
+  FEE_TAG	                VARCHAR2(1),
+  RATE_TAG	              VARCHAR2(1),
+  LAST_UPDATED_BY       	VARCHAR2(64),
+  LAST_UPDATED_AT       	DATE
+)TABLESPACE GEC;
+
+COMMENT ON TABLE GEC_BROKER_RETURN_RULE
+  IS 'It is a configuration table based on Lender and trade country level to decide how to send the RTCB-IN message.';
+ALTER TABLE GEC_BROKER_RETURN_RULE ADD CONSTRAINTS GEC_BROKER_RETURN_RULE_PK
+  PRIMARY KEY(BROKER_RETURN_RULE_ID) USING INDEX TABLESPACE GEC;
+
+comment on column GEC_BROKER_RETURN_RULE.BROKER_CD 
+  is 'The values: BROKER_CD on GEC_BROKER table, ALL';
+comment on column GEC_BROKER_RETURN_RULE.TRADE_COUNTRY_CD 
+  is 'The values: TRADE_COUNTRY_CD on GEC_TRADE_COUNTRY table, ALL';
+comment on column GEC_BROKER_RETURN_RULE.AUTO_RETURN_FLAG 
+  is 'The values: Y, N. It decide RTCB-IN message can be send based on Lender and trade country level';
+comment on column GEC_BROKER_RETURN_RULE.DIVIDEND_RATE_TAG 
+  is 'The values: Y, N, NULL. It decide if the tag can be allowed include in RTCB-IN message';
+comment on column GEC_BROKER_RETURN_RULE.COLLATERAL_TYPE_TAG 
+  is 'The values: Y, N, NULL. It decide if the tag can be allowed include in RTCB-IN message';
+comment on column GEC_BROKER_RETURN_RULE.COLLATERAL_CURRENCY_TAG 
+  is 'The values: Y, N, NULL. It decide if the tag can be allowed include in RTCB-IN message';
+comment on column GEC_BROKER_RETURN_RULE.FEE_TAG 
+  is 'The values: Y, N, NULL. It decide if the tag can be allowed include in RTCB-IN message';
+comment on column GEC_BROKER_RETURN_RULE.RATE_TAG 
+  is 'The values: Y, N, NULL. It decide if the tag can be allowed include in RTCB-IN message';

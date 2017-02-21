@@ -1,0 +1,138 @@
+create table GEC_IM_ORDER
+(
+  IM_ORDER_ID           NUMBER(38) not null,
+  REQUEST_ID            NUMBER(38),
+  FUND_CD               VARCHAR2(4),
+  BRANCH_CD             VARCHAR2(10),
+  STRATEGY_ID           NUMBER(38),
+  INVESTMENT_MANAGER_CD VARCHAR2(32),
+  BUSINESS_DATE         NUMBER(8),
+  ASSET_ID              NUMBER(38),
+  ASSET_TYPE_ID         VARCHAR2(1),
+  ASSET_CODE            VARCHAR2(20),
+  ASSET_CODE_TYPE       VARCHAR2(3),
+  CUSIP                 VARCHAR2(9),
+  ISIN                  VARCHAR2(12),
+  QUIK                  VARCHAR2(5),
+  SEDOL                 VARCHAR2(7),
+  RATE                  NUMBER(14,6),
+  TICKER                VARCHAR2(50),
+  DESCRIPTION           VARCHAR2(50),
+  TRADE_COUNTRY_CD      VARCHAR2(3),
+  AT_POINT_AVAIL_QTY    NUMBER(38),
+  CLIENT_REF_NO         VARCHAR2(100),
+  FILE_VERSION          NUMBER(2) default 24,
+  POSITION_FLAG         VARCHAR2(2),
+  SHARE_QTY             NUMBER(38) default 0,
+  RESERVED_SB_QTY       NUMBER(38) default 0,
+  RESERVED_SB_QTY_RAL   NUMBER(38) default 0,
+  RESERVED_NSB_QTY      NUMBER(38) default 0,
+  RESERVED_NFS_QTY      NUMBER(38) default 0,
+  RESERVED_EXT2_QTY     NUMBER(38) default 0,
+  FILLED_QTY            NUMBER(38) default 0,
+  RESTRICTION_CD        VARCHAR2(1) default '0',
+  SB_BROKER_CD          VARCHAR2(6),
+  SETTLE_DATE           NUMBER(8),
+  STATUS                VARCHAR2(1) not null,
+  EXPORT_STATUS         VARCHAR2(1) default 'N' not null,
+  TRADE_DATE            NUMBER(8),
+  TRANSACTION_CD        VARCHAR2(20) not null,
+  HOLDBACK_FLAG         VARCHAR2(1) default 'N' not null,
+  SFA_EXTRACTED_AT      DATE,
+  G1_EXTRACTED_AT       DATE,
+  G1_EXTRACTED_FLAG     VARCHAR2(1),
+  INTERNAL_COMMENT_TXT  VARCHAR2(4000),
+  COMMENT_TXT           VARCHAR2(4000),
+  SOURCE_CD             VARCHAR2(32) not null,
+  MATCHED_ID			NUMBER(38),
+  LOCATE_PREBORROW_ID   NUMBER(38),
+  CREATED_AT            DATE default SYSDATE,
+  CREATED_BY            VARCHAR2(64),
+  UPDATED_AT            DATE default SYSDATE,
+  UPDATED_BY            VARCHAR2(64),
+  LAST_UPDATED_AT       DATE,
+  LAST_UPDATED_BY       VARCHAR2(64),
+  SETTLEMENT_LOCATION_CD	VARCHAR2(3),
+  LEGAL_ENTITY_CD	VARCHAR2(40),
+  TICKET_SIZE		NUMBER(38,2),
+  LOAN_AMOUNT		NUMBER(38,2),
+  P_SHARES_SETTLE_DATE	NUMBER(8)
+)tablespace GEC;
+
+comment on column GEC_IM_ORDER.REQUEST_ID
+  is 'Refer to gec_request.REQUEST_ID.';
+comment on column GEC_IM_ORDER.BUSINESS_DATE
+  is 'Trade date of the locate request';
+comment on column GEC_IM_ORDER.ASSET_ID
+  is 'Security identifier for this request.Refter to gec_asset.asset_id. It is null if the asset is not found.';
+comment on column GEC_IM_ORDER.ASSET_TYPE_ID
+  is 'Securities type: values: 4 ,0';
+comment on column GEC_IM_ORDER.TRADE_COUNTRY_CD
+  is 'Trade country code';
+comment on column GEC_IM_ORDER.AT_POINT_AVAIL_QTY
+  is 'The available qty when the locate/preborrow/short/cover record is created.';
+comment on column GEC_IM_ORDER.CLIENT_REF_NO
+  is 'Client reference number';
+comment on column GEC_IM_ORDER.FILE_VERSION
+  is 'Values: 24 and 30. It is locate file format. 24 means version 2.4, while 30 means version 3.0';
+comment on column GEC_IM_ORDER.POSITION_FLAG
+  is 'Position code, acceptabale values: "GC" or "SP"';
+comment on column GEC_IM_ORDER.SHARE_QTY
+  is 'Share quantity';
+comment on column GEC_IM_ORDER.RESERVED_SB_QTY
+  is 'Indicates the quantity of SB shares reserved to this activity';
+comment on column GEC_IM_ORDER.RESERVED_SB_QTY_RAL
+  is 'Indicates the quantity of SB shares that need to be reallocated before booking the SB loan';
+comment on column GEC_IM_ORDER.RESERVED_NSB_QTY
+  is 'Indicates the quantity of NSB shares reserved to this activity';
+comment on column GEC_IM_ORDER.RESERVED_NFS_QTY
+  is 'Indicates the quantity of NFS shares reserved to this activity';
+comment on column GEC_IM_ORDER.RESERVED_EXT2_QTY
+  is 'Indicates the quantity of EXT2 shares reserved to this activity';
+comment on column GEC_IM_ORDER.RESTRICTION_CD
+  is 'DML security restriction code';
+comment on column GEC_IM_ORDER.SB_BROKER_CD
+  is 'Default from Fund SB broker';
+comment on column GEC_IM_ORDER.SETTLE_DATE
+  is 'Settlement date';
+comment on column GEC_IM_ORDER.STATUS
+  is 'P-ending, C-anceled, X(Error), E-xception, B-ooked.';
+comment on column GEC_IM_ORDER.EXPORT_STATUS
+  is 'Export status of the last borrow request. Values: N-ew, I(In-Flight), P-ending(not used actually), R-esponsed, F-ail(not used actually), C-ompleted(only for SHORTSB). New and Responsed SHORT/SHORTSB can be exported.' ;
+comment on column GEC_IM_ORDER.TRADE_DATE
+  is 'Order trade date';
+comment on column GEC_IM_ORDER.TRANSACTION_CD
+  is 'Values: SHORT, COVER, COVER CANCEL, SHORT CANCEL, SHORTSB';
+comment on column GEC_IM_ORDER.HOLDBACK_FLAG
+  is 'Trader can holdback a short for SFA. Values: Y-es, N-o, C-NonCash ';
+comment on column GEC_IM_ORDER.SFA_EXTRACTED_AT
+  is 'The datetime that a SFA borrow request is created for this short.';
+comment on column GEC_IM_ORDER.G1_EXTRACTED_AT
+  is 'The datetime that the cover is exported to G1 for booking. For short, there could be two loans(sb and nsb) so the g1_extracted_at field is in gec_loan table. System can use this field as the last g1 book datetime.';
+comment on column GEC_IM_ORDER.G1_EXTRACTED_FLAG
+  is 'Values: Blank: short/cover has never been exported for G1 booking; Y-es: short/cover is exported for G1 booking; N-o: COVER is set to G1 resend-eligible.';
+comment on column GEC_IM_ORDER.FILLED_QTY
+  is 'The total allocated Qty by borrows. It should be equal to the sum of gec_allocation.ALLOCATION_QTY.';
+comment on column GEC_IM_ORDER.SOURCE_CD
+  is 'Values: File-Auto, UI - Trader File Upload, Dummy - No Demand Borrow, Dummy - Borrow More Than Demand. The value maybe changed in future, so it is not put in gec_request table, similar to gec_locate_preborrow.';
+comment on column GEC_IM_ORDER.MATCHED_ID
+  is 'IF transaction type=SHORT CANCEl,matched_id is short orderid';
+comment on column GEC_IM_ORDER.LOCATE_PREBORROW_ID
+  is 'If the SHORT can match a locate, this field will record the matched locate_preborrow_id; else, it will be blank. This new field is for report module.';
+comment on column GEC_IM_ORDER.RATE
+  is 'If it is a short, come from the locate_preborrow"s indicative_fee with same strategy and fund. If there are more than one locate, 
+  get the max fee and if there is no locate and asset type is GC, get the GC Rate from this short"s fund Strategy Profile with short Trade Country, 
+  if there is no locate and asset type is SP, set blank, if the locate"s fee is "GC" text, get the GC Rate from this short"s fund Strategy Profile with short Trade Country, if the order is cover, set it to be blank. ';
+comment on column GEC_IM_ORDER.P_SHARES_SETTLE_DATE
+  is 'To indicate the target settlement date for borrowing shares for a P Share affected order.'; 
+ALTER TABLE GEC_IM_ORDER
+  ADD( CONSTRAINT GEC_IM_ORDER_PK PRIMARY KEY (IM_ORDER_ID)  USING INDEX TABLESPACE  GEC);
+
+alter table GEC_IM_ORDER
+  add constraint GEC_IM_ORDER_FK1 foreign key (ASSET_ID)
+  references GEC_ASSET (ASSET_ID);   
+
+create index GEC_IM_ORDER_IDX1 on GEC_IM_ORDER (ASSET_ID, FUND_CD, SETTLE_DATE) TABLESPACE GEC;
+create index GEC_IM_ORDER_IDX2 on GEC_IM_ORDER (TRADE_DATE) TABLESPACE GEC;
+create index GEC_IM_ORDER_IDX3 on GEC_IM_ORDER (SETTLE_DATE) TABLESPACE GEC;
+create index GEC_IM_ORDER_IDX4 on GEC_IM_ORDER (TRUNC(CREATED_AT)) TABLESPACE GEC;

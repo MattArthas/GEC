@@ -1,0 +1,21 @@
+create table GEC_REQUEST_AUD
+(
+  REQUEST_ID            NUMBER(38),
+  IM_REQUEST_ID         VARCHAR2(64),
+  IM_USER_ID            VARCHAR2(64),
+  INVESTMENT_MANAGER_CD VARCHAR2(32),
+  BUSINESS_DATE         NUMBER(8),
+  STRATEGY_ID           NUMBER(38),
+  STATUS                VARCHAR2(1),
+  STATUS_MSG            VARCHAR2(12),
+  COMMENT_TXT           VARCHAR2(4000),
+  LOCATE_COUNT          NUMBER(6),
+  REPLY_URL             VARCHAR2(4000),
+  CREATED_BY            VARCHAR2(64),
+  CREATED_AT            DATE,
+  LAST_UPDATED_BY       VARCHAR2(64),
+  LAST_UPDATED_AT       DATE,
+  OP_CODE               CHAR(1)
+) TABLESPACE GEC
+;
+

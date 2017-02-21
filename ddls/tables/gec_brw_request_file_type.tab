@@ -1,0 +1,25 @@
+create table GEC_BRW_REQUEST_FILE_TYPE
+(
+  DISPLAY_ORDER   NUMBER(3) NOT NULL,
+  BORROW_REQUEST_FILE_TYPE     VARCHAR2(10) not null,
+  BORROW_REQUEST_TYPE          VARCHAR2(250) not null,
+  ELIGIBLE_SETTLE_DATES        VARCHAR2(10),
+  DESCRIPTION                  VARCHAR2(50),
+  LAST_UPDATED_AT              DATE,
+  LAST_UPDATED_BY              VARCHAR2(64)
+)tablespace GEC;
+
+comment on table GEC_BRW_REQUEST_FILE_TYPE
+  is 'The table value is to display in Export Borrow Request list.';
+comment on column GEC_BRW_REQUEST_FILE_TYPE.BORROW_REQUEST_FILE_TYPE
+  is 'Primary key. Values:SB,NSB,Equilend0,Equilend1';
+comment on column GEC_BRW_REQUEST_FILE_TYPE.BORROW_REQUEST_TYPE
+  is 'Plz refer to GEC_BORROW_REQUEST_TYPE.BORROW_REQUEST_TYPE';
+comment on column GEC_BRW_REQUEST_FILE_TYPE.ELIGIBLE_SETTLE_DATES
+  is 'The value is numbers sepereated by comma, such as 0,1,2,3, which means T, T+1, T+2 and T+3.';
+comment on column GEC_BRW_REQUEST_FILE_TYPE.DESCRIPTION
+  is 'The display value in the dropdown of export trade blotter function';
+ALTER TABLE GEC_BRW_REQUEST_FILE_TYPE
+  ADD( CONSTRAINT GEC_BRW_REQUEST_FILE_TYPE_PK PRIMARY KEY (BORROW_REQUEST_FILE_TYPE)  USING INDEX TABLESPACE  GEC);
+COMMENT ON COLUMN GEC_BRW_REQUEST_FILE_TYPE.DISPLAY_ORDER
+  IS 'This value is to make the query result sorted.';

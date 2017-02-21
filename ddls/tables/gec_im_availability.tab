@@ -1,0 +1,122 @@
+create table GEC_IM_AVAILABILITY
+(
+  IM_AVAILABILITY_ID    	NUMBER(38) 		not null,
+  ASSET_ID              	NUMBER(38),
+  BUSINESS_DATE         	NUMBER(8) 		not null,
+  CLIENT_CD             	VARCHAR2(32) 	not null,
+  INVESTMENT_MANAGER_CD 	VARCHAR2(32) 	not null,
+  ASSET_CODE            	VARCHAR2(20),
+  ASSET_CODE_TYPE       	VARCHAR2(3),
+  POSITION_FLAG         	VARCHAR2(2),
+  RESTRICTION_CD        	VARCHAR2(1) 	default '0',
+  NSB_QTY               	NUMBER(38) 		default 0,
+  NSB_RATE              	NUMBER(36,6) 	default 0,
+  INDICATIVE_RATE           VARCHAR2(10),
+  SB_QTY                	NUMBER(38) 		default 0,
+  SB_QTY_RAL            	NUMBER(38) 		default 0,
+  SB_RATE               	NUMBER(36,6) 	default 0,
+  NFS_QTY               	NUMBER(38) 		default 0,
+  NFS_RATE              	NUMBER(36,6) 	default 0,
+  EXT2_QTY              	NUMBER(38) 		default 0,
+  EXT2_RATE             	NUMBER(36,6) 	default 0,
+  SB_QTY_SOD            	NUMBER(38) 		default 0,
+  NSB_QTY_SOD           	NUMBER(38) 		default 0,
+  SB_QTY_RAL_SOD        	NUMBER(38) 		default 0,
+  NFS_QTY_SOD           	NUMBER(38) 		default 0,
+  EXT2_QTY_SOD          	NUMBER(38) 		default 0,
+  SOURCE_CD             	VARCHAR2(64) 	default 'System',
+  STRATEGY_ID				NUMBER(38),	
+  TRADE_COUNTRY_CD			VARCHAR2(3),	
+  STATUS					VARCHAR2(1)		default 'A',
+  COLLATERAL_CURRENCY_CD	VARCHAR2(3),
+  COLLATERAL_TYPE			VARCHAR2(10), 
+  INTERNAL_COMMENT_TXT		VARCHAR2(4000),
+  CREATED_BY            	VARCHAR2(64),
+  CREATED_AT            	DATE,
+  LAST_UPDATED_BY       	VARCHAR2(64),
+  LAST_UPDATED_AT       	DATE,
+  AVAILABILITY_REGION       VARCHAR2(20),
+  INDICATIVE_RATE_NUMBER	NUMBER(36,6) 
+)TABLESPACE GEC
+;
+comment on table GEC_IM_AVAILABILITY
+  is 'Investment Manager Published Availabitly ';
+comment on column GEC_IM_AVAILABILITY.ASSET_ID
+  is 'Asset identifer';
+comment on column GEC_IM_AVAILABILITY.BUSINESS_DATE
+  is 'Business date the availability file is for';
+comment on column GEC_IM_AVAILABILITY.CLIENT_CD
+  is 'Client name';
+comment on column GEC_IM_AVAILABILITY.INVESTMENT_MANAGER_CD
+  is 'Investment manager name, it is equal to gec_client.client_short_name';
+comment on column GEC_IM_AVAILABILITY.POSITION_FLAG
+  is 'Position code, acceptabale values: "GC" or "SP"';
+comment on column GEC_IM_AVAILABILITY.RESTRICTION_CD
+  is 'DML security restriction code';
+comment on column GEC_IM_AVAILABILITY.NSB_QTY
+  is 'Non self borrow quantity';
+comment on column GEC_IM_AVAILABILITY.NSB_RATE
+  is 'Non self borrow quantity rate';
+comment on column GEC_IM_AVAILABILITY.SB_QTY
+  is 'Self borrow quantity';
+comment on column GEC_IM_AVAILABILITY.SB_QTY_RAL
+  is 'Sum the shares that are out on loan in the Agency program, non self-borrow';
+comment on column GEC_IM_AVAILABILITY.SB_RATE
+  is 'Self borrow rate';
+comment on column GEC_IM_AVAILABILITY.NFS_QTY
+  is 'Availability from Fidelity';
+comment on column GEC_IM_AVAILABILITY.NFS_RATE
+  is 'Fidelity rate';
+comment on column GEC_IM_AVAILABILITY.EXT2_QTY
+  is 'Availability from external 2';
+comment on column GEC_IM_AVAILABILITY.EXT2_RATE
+  is 'External 2 rate';
+comment on column GEC_IM_AVAILABILITY.SB_QTY_SOD
+  is 'SB quantity start of day';
+comment on column GEC_IM_AVAILABILITY.NSB_QTY_SOD
+  is 'NSB quantity start of day';
+comment on column GEC_IM_AVAILABILITY.SB_QTY_RAL_SOD
+  is 'SB RAL quantity start of day';
+comment on column GEC_IM_AVAILABILITY.NFS_QTY_SOD
+  is 'NFS quantity start of day';
+comment on column GEC_IM_AVAILABILITY.EXT2_QTY_SOD
+  is 'EXT2 quantity start of day';
+comment on column GEC_IM_AVAILABILITY.SOURCE_CD
+  is 'Source for records or Update operator';
+comment on column GEC_IM_AVAILABILITY.CREATED_BY
+  is 'IR: it is created by system job; NULL if it is created by user requests; Null if it is created by auto ST locate/preborrow requests.';
+comment on column GEC_IM_AVAILABILITY.CREATED_AT
+  is 'Create date and time';
+comment on column GEC_IM_AVAILABILITY.STRATEGY_ID
+  is '(business_date, cusip, strategy_id, trade_country) will definitly determine only one availability record.';
+comment on column GEC_IM_AVAILABILITY.STATUS
+  is 'Values: A-ctive, E-xpired. System use active availability to match locates.';
+comment on column GEC_IM_AVAILABILITY.COLLATERAL_CURRENCY_CD
+  is 'Values: USD, HKD and JPN, etc. It is corresponding to IR field: coll_code.';  
+comment on column GEC_IM_AVAILABILITY.COLLATERAL_TYPE
+  is 'Values: CASH, etc.It is corresponding to IR field: coll_type.';  
+comment on column GEC_IM_AVAILABILITY.INTERNAL_COMMENT_TXT
+  is 'comment for internal users';
+comment on column GEC_IM_AVAILABILITY.INDICATIVE_RATE_NUMBER
+  is 'It is the number type of indicative rate.';
+  
+alter table GEC_IM_AVAILABILITY
+  add ( constraint GEC_IM_AVAILABILITY_PK primary key (IM_AVAILABILITY_ID)  USING INDEX TABLESPACE  GEC);
+alter table GEC_IM_AVAILABILITY
+  add constraint GEC_IM_AVAILABILITY_FK1 foreign key (ASSET_ID)
+  references GEC_ASSET (ASSET_ID);
+alter table GEC_IM_AVAILABILITY
+  add constraint GEC_IM_AVAILABILITY_FK2 foreign key (RESTRICTION_CD)
+  references GEC_RESTRICTION (RESTRICTION_CD);
+create index GEC_IM_AVAILABILITY_IDX1 on GEC_IM_AVAILABILITY (ASSET_ID, STRATEGY_ID, STATUS) TABLESPACE GEC;
+create index GEC_IM_AVAILABILITY_IDX2 on GEC_IM_AVAILABILITY (STRATEGY_ID, STATUS, INVESTMENT_MANAGER_CD, TRADE_COUNTRY_CD) TABLESPACE GEC;
+create index GEC_IM_AVAILABILITY_IDX3 on GEC_IM_AVAILABILITY (INVESTMENT_MANAGER_CD, STATUS, TRADE_COUNTRY_CD) TABLESPACE GEC;
+
+alter table GEC_IM_AVAILABILITY
+  add constraint GEC_IM_AVAILABILITY_FK3 foreign key (STRATEGY_ID)
+  references GEC_STRATEGY (STRATEGY_ID);
+
+alter table GEC_IM_AVAILABILITY
+  add constraint GEC_IM_AVAILABILITY_FK4 foreign key (TRADE_COUNTRY_CD)
+  references GEC_TRADE_COUNTRY(TRADE_COUNTRY_CD);
+  

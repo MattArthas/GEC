@@ -1,0 +1,11 @@
+create table GEC_REGION
+(
+  REGION_CD       VARCHAR2(3) not null,
+  REGION_NAME     VARCHAR2(20),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+)TABLESPACE GEC
+;
+alter table GEC_REGION
+  add ( constraint GEC_REGION_PK primary key (REGION_CD)  USING INDEX TABLESPACE  GEC);
+

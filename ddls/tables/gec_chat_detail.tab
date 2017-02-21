@@ -1,0 +1,37 @@
+create table GEC_CHAT_DETAIL
+(
+  CHAT_DETAIL_ID  NUMBER(38) not null,
+  CHAT_SESSION_ID NUMBER(38),
+  FROM_USER_ID    VARCHAR2(64),
+  TO_USER_ID      VARCHAR2(64),
+  SEND_TIME       DATE,
+  LOCATE_ID       NUMBER(38),
+  CHAT_MSG        VARCHAR2(2000),
+  STATUS          VARCHAR2(1),
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+) TABLESPACE GEC
+;
+alter table GEC_CHAT_DETAIL
+  add ( constraint GEC_CHAT_DETAIL_PK primary key (CHAT_DETAIL_ID) USING INDEX TABLESPACE GEC );
+alter table GEC_CHAT_DETAIL
+  add  constraint GEC_CHAT_DETAIL_FK1 foreign key (CHAT_SESSION_ID)
+  references GEC_CHAT_SESSION (CHAT_SESSION_ID) ;
+
+
+comment on column GEC_CHAT_DETAIL.CHAT_DETAIL_ID
+  is 'CHAT DETAIL ID';
+comment on column GEC_CHAT_DETAIL.CHAT_SESSION_ID
+  is 'CHAT SESSION ID';
+comment on column GEC_CHAT_DETAIL.FROM_USER_ID
+  is 'The user Who sends the message.';
+comment on column GEC_CHAT_DETAIL.TO_USER_ID
+  is 'The user Who receives the message.';
+comment on column GEC_CHAT_DETAIL.SEND_TIME
+  is 'SEND TIME';
+comment on column GEC_CHAT_DETAIL.LOCATE_ID
+  is 'Locate Id which this chat is associated with.';
+comment on column GEC_CHAT_DETAIL.STATUS
+  is 'It is useless now due to change of chat design.';
+
+  

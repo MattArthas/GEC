@@ -1,0 +1,35 @@
+create table GEC_USER_PREF
+(
+  USER_ID           			VARCHAR2(64) 	not null,
+  SFA_EMAILS        			VARCHAR2(4000),
+  SFA_FILE_LOCATION 			VARCHAR2(400),
+  ROW_NUMBER        			NUMBER(10),
+  CHAT_AUDIO_INDICATOR			VARCHAR2(3) 	NOT NULL,  
+  CHAT_AUDIO_INDICATE_INTERVAL 	NUMBER(3) 		NOT NULL, 
+  SEPARATOR_TYPE				CHAR(1)			default ',',
+  TIME_FORMAT					CHAR(1)			default '1',
+  DATE_FORMAT					VARCHAR2(20)	default 'dd-Mmm-yyyy',
+  LAST_UPDATED_BY   			VARCHAR2(64),
+  LAST_UPDATED_AT   			DATE
+)TABLESPACE GEC
+;
+alter table GEC_USER_PREF
+  add ( constraint GEC_USER_PREF_PK primary key (USER_ID)  USING INDEX TABLESPACE  GEC);
+alter table GEC_USER_PREF
+  add constraint GEC_USER_PREF_FK1 foreign key (USER_ID)
+  references GEC_USER (USER_ID);
+  
+comment on table GEC_USER_PREF
+  is 'User preference Table';
+comment on column GEC_USER_PREF.CHAT_AUDIO_INDICATOR
+  is 'ON: means that trader will get an audio alert once an IM user ping him by chat module. OFF: means that there is audio alert for such case.';
+comment on column GEC_USER_PREF.CHAT_AUDIO_INDICATE_INTERVAL
+  is 'The interval to beep while the message received has not been opened.';
+comment on column GEC_USER_PREF.TIME_FORMAT
+  is 'Value: 1(default) means 12 Hour: e.g. 10:13 am, and 2 means 24 Hour: e.g.14:24.';
+comment on column GEC_USER_PREF.DATE_FORMAT
+  is 'Values: dd-Mmm-yyyy(default value), mm/dd/yyyy, dd/mm/yyyy';
+comment on column GEC_USER_PREF.SEPARATOR_TYPE 
+is 'The seperator of numbers. Values: ,(default comma) and .(full stop) If the value is comma, the number 1000 will display as 1,000';
+
+  

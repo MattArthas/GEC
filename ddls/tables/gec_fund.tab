@@ -1,0 +1,79 @@
+create table GEC_FUND
+(
+  FUND_ID               	NUMBER(10) not null,
+  FUND_CD               	VARCHAR2(4) not null,
+  CLIENT_CD             	VARCHAR2(32) not null,
+  INVESTMENT_MANAGER_CD 	VARCHAR2(32) not null,
+  STRATEGY_ID           	NUMBER(38),
+  FINANCE_POOL          	VARCHAR2(4),
+  DML_SB_BROKER         	VARCHAR2(6),
+  DML_NSB_BROKER        	VARCHAR2(6),
+  SB_COLLATERAL_TYPE        VARCHAR2(4),
+  NSB_COLLATERAL_TYPE       VARCHAR2(4),
+  REGION_CD             	VARCHAR2(3) default 'BOS',
+  COLLATERAL_CURRENCY_CD    VARCHAR2(3) default 'USD',
+  RATE_DISPLAY          	VARCHAR2(1),
+  RATE_FACTOR           	NUMBER(28,2) default 0,
+  RATE_TEXT             	VARCHAR2(10),
+  REQUEST_TRAILER       	VARCHAR2(1),
+  RESPONSE_TRAILER      	VARCHAR2(1),
+  ORDER_TRAILER         	VARCHAR2(1),
+  INCLUDE_LOCATE_FLAG   	VARCHAR2(1),
+  GROUP_LOAN_FLAG			VARCHAR2(1),
+  BRANCH_CD                 VARCHAR2(10) default 'BOS',
+  INCLUDE_LIQUIDITY_FLAG    VARCHAR2(1) default 'N',
+  INCLUDE_LIQUIDITY_STATEMENT VARCHAR2(1) default 'N',
+  LEGAL_ENTITY_CD	        VARCHAR2(40) default 'SSBT',
+  STATUS					VARCHAR2(1) default 'A',
+  STATUS_MSG				VARCHAR2(64) default 'Active',
+  G1_INSTANCE_CD			VARCHAR2(40) default 'SSBT',
+  FUND_CATEGORY_CD			VARCHAR2(50),
+  LAST_UPDATED_BY       	VARCHAR2(64),
+  LAST_UPDATED_AT       	DATE
+)TABLESPACE GEC
+;
+comment on table GEC_FUND
+  is 'fund reference';
+comment on column GEC_FUND.FUND_CD
+  is 'DML fund id';
+comment on column GEC_FUND.CLIENT_CD
+  is 'Matches the client on the SOD availabilty file';
+comment on column GEC_FUND.INVESTMENT_MANAGER_CD
+  is 'Investment manager';
+comment on column GEC_FUND.FINANCE_POOL
+  is 'Finance pool for client';
+comment on column GEC_FUND.DML_SB_BROKER
+  is 'DML Self borrow broker code. Attention: As per GEC-1940, the saved value 000000 should be regard as blank/null.';
+comment on column GEC_FUND.DML_NSB_BROKER
+  is 'DML Non-Self borrow broker code';
+comment on column GEC_FUND.RATE_DISPLAY
+  is 'Rebate, Fee or Offset';
+comment on column GEC_FUND.RATE_FACTOR
+  is 'When RD is F, use calculation'; 
+comment on column GEC_FUND.STRATEGY_ID
+  is 'The Strategy which this fund belongs to'; 
+comment on column GEC_FUND.REQUEST_TRAILER
+  is 'Y,N.The flag indicates to check trailer of locate file.'; 
+comment on column GEC_FUND.RESPONSE_TRAILER
+  is 'Y,N.The flag indicates to check trailer of locate response file.'; 
+comment on column GEC_FUND.ORDER_TRAILER
+  is 'Y,N.The flag indicates to check trailer of order file.'; 
+comment on column GEC_FUND.GROUP_LOAN_FLAG
+  is 'Values: Y-es, N-o. The same shorts should be grouped together for the G1 Loan booking if the value is Y.';
+comment on column GEC_FUND.INCLUDE_LIQUIDITY_FLAG
+  is 'Values: Y-es, N-o.';
+comment on column GEC_FUND.INCLUDE_LIQUIDITY_STATEMENT
+  is 'Values: Y-es, N-o.';
+comment on column GEC_FUND.FUND_CATEGORY_CD
+  is 'There is not null, default value limit for the column as new created fund before P-Shares go to PROD may have null value. Null value has the same process as Segregated Fund.';  
+comment on column GEC_FUND.G1_INSTANCE_CD
+  is 'Refer to GEC_G1_INSTANCE table.';  
+    
+alter table GEC_FUND
+  add ( constraint GEC_FUND_PK primary key (FUND_ID)  USING INDEX TABLESPACE  GEC);
+alter table GEC_FUND
+  add ( constraint GEC_FUND_UK unique (FUND_CD)  USING INDEX TABLESPACE  GEC);
+alter table GEC_FUND
+  add constraint GEC_FUND_FK1 foreign key (STRATEGY_ID)
+  references GEC_STRATEGY (STRATEGY_ID);
+

@@ -1,0 +1,18 @@
+create table GEC_CHAIN_SCHEDULE_REQUEST
+(
+	CHAIN_SCHEDULE_REQUEST_ID	NUMBER(38),
+	STATUS	                    VARCHAR2(1) not null,
+	CREATED_AT	                DATE,
+	CREATED_BY	                VARCHAR2(64),
+	LAST_UPDATED_AT	            DATE,
+	LAST_UPDATED_BY	            VARCHAR2(64)
+)tablespace GEC;
+
+COMMENT ON TABLE GEC_CHAIN_SCHEDULE_REQUEST
+  IS 'It store the chain and schedule request.';
+COMMENT ON COLUMN GEC_CHAIN_SCHEDULE_REQUEST.STATUS
+  IS 'Request"s status, value is  I-nitial, R-esponsed, X(Error), E-xception and C-omplete.';
+
+ALTER TABLE GEC_CHAIN_SCHEDULE_REQUEST ADD CONSTRAINTS GEC_CHAIN_SCHEDULE_REQUEST_PK
+  PRIMARY KEY(CHAIN_SCHEDULE_REQUEST_ID) USING INDEX TABLESPACE GEC;
+    

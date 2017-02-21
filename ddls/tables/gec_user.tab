@@ -1,0 +1,45 @@
+create table GEC_USER
+(
+  USER_ID         VARCHAR2(64) not null,
+  REGION_CD       VARCHAR2(3) not null,
+  CLIENT_ID       NUMBER(38) not null,
+  FIRST_NAME      VARCHAR2(20),
+  LAST_NAME       VARCHAR2(20),
+  PHONE           VARCHAR2(30),
+  EMAIL           VARCHAR2(100),
+  STATUS          VARCHAR2(1) default 'A' not null,
+  APP_STATUS      VARCHAR2(1),
+  APP_STATUS_DATE DATE,
+  CREATED_BY      VARCHAR2(64),
+  CREATED_AT      DATE,
+  EXPIRE_DATE     DATE,
+  USER_REF_NUM    VARCHAR2(10),
+  GL_PHONE        VARCHAR2(30),
+  GL_EMAIL        VARCHAR2(100),
+  ACCEPT_TERMS_FLAG VARCHAR2(1) default 'N' not null,
+  TRADING_DESK_CD VARCHAR2(10),  
+  LAST_UPDATED_BY VARCHAR2(64),
+  LAST_UPDATED_AT DATE
+)TABLESPACE GEC
+;
+alter table GEC_USER
+  add ( constraint GEC_USER_PK primary key (USER_ID)  USING INDEX  TABLESPACE GEC);
+alter table GEC_USER
+  add constraint GEC_USER_FK1 foreign key (REGION_CD)
+  references GEC_REGION (REGION_CD);
+alter table GEC_USER
+  add constraint GEC_USER_FK2 foreign key (CLIENT_ID)
+  references GEC_CLIENT (CLIENT_ID);
+
+comment on table GEC_USER
+  is 'User table.';
+comment on column GEC_USER.STATUS
+  is 'A-ctive,I-nactive.';
+comment on column GEC_USER.APP_STATUS
+  is 'A-ctive,I-nactive.';
+comment on column GEC_USER.ACCEPT_TERMS_FLAG
+  is 'The value Y means the user has accepted the licensing aggrement terms, while the value N means not and SYSTEM would popup the terms to user when the user logins.';
+comment on column GEC_USER.TRADING_DESK_CD
+  is 'The primary trading desk for traders or IM users.';
+   
+  

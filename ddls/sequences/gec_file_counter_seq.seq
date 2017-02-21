@@ -1,0 +1,9 @@
+--The maxvalue of sequence RESET_FILE_COUNTER_SEQ must be equal to local variable v_maxSeqValue in GEC_DAILY_JOB_PKG.RESET_FILE_COUNTER_SEQ
+create sequence GEC_FILE_COUNTER_SEQ
+minvalue 1
+maxvalue 99
+start with 1
+increment by 1
+cycle
+cache 20;
+

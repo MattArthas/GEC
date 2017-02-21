@@ -1,0 +1,11 @@
+create table GEC_APPLICATION_PROPERTIES_AUD
+(
+	PROP_GROUP varchar2(30),
+	KEY varchar2(30),
+	VALUE varchar2(512),
+  	LAST_UPDATED_BY        VARCHAR2(64),
+  	LAST_UPDATED_AT        DATE,
+  	OP_CODE                CHAR(1)
+)
+tablespace GEC;
+

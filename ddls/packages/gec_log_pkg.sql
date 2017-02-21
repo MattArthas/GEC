@@ -1,0 +1,186 @@
+-------------------------------------------------------------------------
+-- Copyright (c) 2009 State Street Bank and Trust Corp.
+-- 225 Franklin Street, Boston, MA 02110, U.S.A.
+-- All rights reserved.
+--
+-- "GEC_LOG_PKG.sql is the copyrighted,
+-- proprietary property of State Street Bank and Trust Company and its
+-- subsidiaries and affiliates which retain all right, title and interest
+-- therein."
+--
+-- Revision History
+--
+-- Date            Programmer                Notes
+-- ------------    --------------------      ----------------------------
+-- Apr  4, 2009    Zhao Hong                 initial
+-- Dec 12, 2012    Zhao Hong                 Add DEBUG procedure
+--
+-------------------------------------------------------------------------
+
+CREATE OR REPLACE PACKAGE GEC_LOG_PKG
+AS
+   -- This procedure is to log the execution start/end time of sp.
+   -- The logging procedures should not throw any exception to outside.
+   -- AUTONOMOUS_TRANSACTION is used to seperate the transaction of log procedure from the one of caller procedure.
+   PROCEDURE LOG_PERFORMANCE_START( P_JOB_NAME IN  VARCHAR2 );
+
+   PROCEDURE LOG_PERFORMANCE_EXCEPTION( P_JOB_NAME IN  VARCHAR2 );
+
+   PROCEDURE LOG_PERFORMANCE_END  ( P_JOB_NAME   IN  VARCHAR2,
+                                    P_STATUS     IN  VARCHAR2 := 'S',
+                                    P_STATUS_MSG IN  VARCHAR2 := 'SUCCESS');
+
+   PROCEDURE DEBUG( LOG_MSG IN  VARCHAR2 );
+
+END GEC_LOG_PKG;
+/
+
+CREATE OR REPLACE PACKAGE BODY GEC_LOG_PKG
+AS
+   C_LOG_LEVEL_NOLOG   CONSTANT NUMBER(1)   := 0;
+   C_LOG_LEVEL_FATAL   CONSTANT NUMBER(1)   := 1;
+   C_LOG_LEVEL_ERROR   CONSTANT NUMBER(1)   := 2;
+   C_LOG_LEVEL_WARNING CONSTANT NUMBER(1)   := 3;
+   C_LOG_LEVEL_INFO    CONSTANT NUMBER(1)   := 4;
+   C_LOG_LEVEL_DEBUG   CONSTANT NUMBER(1)   := 5;
+   
+   GP_SESSION_ID GEC_JOB_LOG.SESSION_ID%TYPE;
+
+   -- GP_LOG_FLAG: 'Y' means logging, 'N' means not logging. The change of the DB config takes effect after one hour.
+   GP_LOG_FLAG GEC_CONFIG.ATTR_VALUE1%TYPE := 'N';
+   GP_LOG_FLAG_LOADTIME DATE;
+
+   -- GP_LOG_FLAG: 'Y' means logging, 'N' means not logging. The change of the DB config takes effect after one hour.
+   GP_LOG_LEVEL NUMBER(1) := C_LOG_LEVEL_NOLOG;
+   GP_LOG_LEVEL_LOADTIME DATE;
+   
+   --GET_GP_SESSION_ID is an private procesure.
+   PROCEDURE GET_GP_SESSION_ID
+   IS
+   BEGIN
+      IF GP_SESSION_ID IS NULL THEN
+         SELECT SYS_CONTEXT('USERENV','SESSIONID') INTO GP_SESSION_ID FROM DUAL;
+      END IF;
+   END GET_GP_SESSION_ID;
+
+   PROCEDURE LOG_PERFORMANCE_START( P_JOB_NAME   IN  VARCHAR2 )
+   IS
+      PRAGMA AUTONOMOUS_TRANSACTION;
+      V_START_TIME GEC_JOB_LOG.START_TIME%TYPE;
+   BEGIN
+      GET_GP_SESSION_ID;
+      IF GP_LOG_FLAG_LOADTIME IS NULL OR (SYSDATE - GP_LOG_FLAG_LOADTIME) > 1/24 THEN
+         BEGIN
+            GP_LOG_FLAG_LOADTIME := SYSDATE;
+            SELECT ATTR_VALUE1 INTO GP_LOG_FLAG FROM GEC_CONFIG
+             WHERE ATTR_GROUP = 'PERFORMANCE_LOG'
+               AND ATTR_NAME = 'LOG_ENABLED';
+         EXCEPTION WHEN NO_DATA_FOUND THEN
+            GP_LOG_FLAG := 'N';
+         END;
+      END IF;
+      IF GP_LOG_FLAG = 'Y' THEN
+         SELECT SYSTIMESTAMP INTO V_START_TIME FROM DUAL;
+         INSERT INTO GEC_JOB_LOG(JOB_NAME, SESSION_ID, START_TIME, STATUS, STATUS_MSG)
+            VALUES (P_JOB_NAME, GP_SESSION_ID, V_START_TIME, 'R', 'Running');
+      END IF;
+      COMMIT;
+   EXCEPTION WHEN OTHERS THEN
+      INSERT INTO GEC_JOB_LOG(JOB_NAME, SESSION_ID, START_TIME, END_TIME, STATUS, STATUS_MSG)
+         VALUES ('GEC_LOG_PKG.LOG_PERFORMANCE_START', GP_SESSION_ID, SYSTIMESTAMP, SYSTIMESTAMP, 'F', 'Fail logging');
+      COMMIT;
+   END LOG_PERFORMANCE_START;
+
+   PROCEDURE LOG_PERFORMANCE_EXCEPTION( P_JOB_NAME IN  VARCHAR2 )
+   IS
+      PRAGMA AUTONOMOUS_TRANSACTION;
+      V_STATUS GEC_JOB_LOG.STATUS%TYPE;
+      V_STATUS_MSG GEC_JOB_LOG.STATUS_MSG%TYPE;
+      V_SQLCODE NUMBER(25);
+      V_SQLERRM VARCHAR2(50);
+   BEGIN
+      GET_GP_SESSION_ID;
+      IF GP_LOG_FLAG = 'Y' THEN
+         V_SQLCODE := SQLCODE;
+         V_SQLERRM := SUBSTR(SQLERRM, 1, 50);
+         V_STATUS_MSG := 'SQLCODE=' || TO_CHAR(V_SQLCODE) || ', SQLERRM=' || V_SQLERRM;
+         V_STATUS := 'E';
+         LOG_PERFORMANCE_END(P_JOB_NAME, V_STATUS, V_STATUS_MSG);
+      END IF;
+      COMMIT;
+   EXCEPTION WHEN OTHERS THEN
+      INSERT INTO GEC_JOB_LOG(JOB_NAME, SESSION_ID, START_TIME, END_TIME, STATUS, STATUS_MSG)
+         VALUES ('GEC_LOG_PKG.LOG_PERFORMANCE_EXCEPTION', GP_SESSION_ID, SYSTIMESTAMP, SYSTIMESTAMP, 'F', 'Fail logging');
+      COMMIT;
+   END LOG_PERFORMANCE_EXCEPTION;
+
+   PROCEDURE LOG_PERFORMANCE_END  ( P_JOB_NAME   IN  VARCHAR2,
+                                    P_STATUS     IN  VARCHAR2,
+                                    P_STATUS_MSG IN  VARCHAR2)
+   IS
+      PRAGMA AUTONOMOUS_TRANSACTION;
+      V_START_TIME GEC_JOB_LOG.START_TIME%TYPE;
+      V_END_TIME   GEC_JOB_LOG.START_TIME%TYPE;
+   BEGIN
+      GET_GP_SESSION_ID;
+      IF GP_LOG_FLAG = 'Y' THEN
+         SELECT SYSTIMESTAMP INTO V_END_TIME FROM DUAL;
+
+         SELECT MAX(START_TIME) INTO V_START_TIME
+           FROM GEC_JOB_LOG
+          WHERE JOB_NAME = P_JOB_NAME
+            AND SESSION_ID = GP_SESSION_ID;
+
+         UPDATE GEC_JOB_LOG
+            SET END_TIME = SYSTIMESTAMP,
+                STATUS = P_STATUS,
+                STATUS_MSG = P_STATUS_MSG
+          WHERE JOB_NAME = P_JOB_NAME
+            AND SESSION_ID = GP_SESSION_ID
+            AND START_TIME = V_START_TIME;
+      END IF;
+      COMMIT;
+   EXCEPTION WHEN OTHERS THEN
+      INSERT INTO GEC_JOB_LOG(JOB_NAME, SESSION_ID, START_TIME, END_TIME, STATUS, STATUS_MSG)
+         VALUES ('GEC_LOG_PKG.LOG_PERFORMANCE_END', GP_SESSION_ID, SYSTIMESTAMP, SYSTIMESTAMP, 'F', 'Fail logging');
+      COMMIT;
+   END LOG_PERFORMANCE_END ;
+   
+   --write log into DB GEC_JOB_LOG.STATUS_MSG
+   PROCEDURE LOG_DB( LOG_MSG IN  VARCHAR2, LOG_LEVEL IN NUMBER )
+   IS
+      PRAGMA AUTONOMOUS_TRANSACTION;
+      V_MAX_LENGTH NUMBER := 100;
+      V_PROCEDURE_NAME GEC_JOB_LOG.JOB_NAME%TYPE := 'GEC_JOB_LOG.LOG_DB';
+   BEGIN
+      GET_GP_SESSION_ID;
+      IF GP_LOG_LEVEL_LOADTIME IS NULL OR (SYSDATE - GP_LOG_LEVEL_LOADTIME) > 1/24 THEN
+         BEGIN
+            GP_LOG_LEVEL_LOADTIME := SYSDATE;
+            SELECT TO_NUMBER(ATTR_VALUE1) INTO GP_LOG_LEVEL FROM GEC_CONFIG
+             WHERE ATTR_GROUP = 'LOG_DB'
+               AND ATTR_NAME = 'LOG_LEVEL';
+         EXCEPTION WHEN OTHERS THEN
+            GP_LOG_LEVEL := C_LOG_LEVEL_NOLOG;
+         END;
+      END IF;
+      IF GP_LOG_LEVEL >= LOG_LEVEL THEN
+         SELECT 'GEC_JOB_LOG.LOG_DB.' || TO_CHAR(GEC_JOB_LOG_ID_SEQ.nextval) INTO V_PROCEDURE_NAME FROM DUAL;
+         INSERT INTO GEC_JOB_LOG(JOB_NAME, SESSION_ID, START_TIME, END_TIME, STATUS, STATUS_MSG)
+            VALUES (V_PROCEDURE_NAME, GP_SESSION_ID, SYSTIMESTAMP, SYSTIMESTAMP, TO_CHAR(LOG_LEVEL), SUBSTR(LOG_MSG, 1, V_MAX_LENGTH));
+      END IF;
+      COMMIT;
+   EXCEPTION WHEN OTHERS THEN
+      INSERT INTO GEC_JOB_LOG(JOB_NAME, SESSION_ID, START_TIME, END_TIME, STATUS, STATUS_MSG)
+         VALUES (V_PROCEDURE_NAME, GP_SESSION_ID, SYSTIMESTAMP, SYSTIMESTAMP, 'F', 'Fail DB logging');
+      COMMIT;
+   END LOG_DB;
+   
+   PROCEDURE DEBUG( LOG_MSG IN  VARCHAR2 )
+   IS
+   BEGIN
+      LOG_DB(LOG_MSG, C_LOG_LEVEL_DEBUG);
+   END DEBUG;
+   
+END GEC_LOG_PKG;
+/

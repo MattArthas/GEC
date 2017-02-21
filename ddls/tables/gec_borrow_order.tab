@@ -1,0 +1,42 @@
+create table GEC_BORROW_ORDER
+(
+  BORROW_ORDER_ID        NUMBER(38) not null,
+  BORROW_REQUEST_ID      NUMBER(38) not null,
+  LOG_NUMBER             VARCHAR2(20),
+  ASSET_ID               NUMBER(38) not null,
+  BROKER_CD              VARCHAR2(8),
+  SETTLE_DATE            NUMBER(8),
+  COLLATERAL_TYPE        VARCHAR2(4),
+  COLLATERAL_CURRENCY_CD VARCHAR2(3),
+  STATUS                 VARCHAR2(2),
+  STATUS_MSG             VARCHAR2(64),
+  SHARE_QTY              NUMBER(38),
+  LAST_UPDATED_AT        DATE,
+  LAST_UPDATED_BY        VARCHAR2(64)
+)tablespace GEC;
+
+comment on column GEC_BORROW_ORDER.BORROW_ORDER_ID
+  is 'sequence id';
+comment on column GEC_BORROW_ORDER.BROKER_CD
+  is 'The value is broker code for SB and NSB, but it is ''Equilend'' for Equilend borrow orders.';
+
+
+comment on column   GEC_BORROW_ORDER.STATUS
+  is 'Value is I-n Flight/R-esR-onded/P-artialC-ancelled/C-ancelled/R-ejected.';
+  
+
+alter table GEC_BORROW_ORDER
+  add ( constraint GEC_BORROW_ORDER_PK primary key (BORROW_ORDER_ID) USING INDEX TABLESPACE GEC ) ;
+  
+alter table GEC_BORROW_ORDER
+  add constraint GEC_BORROW_ORDER_FK1 foreign key (BORROW_REQUEST_ID)
+  references GEC_BORROW_REQUEST (BORROW_REQUEST_ID); 
+  
+alter table GEC_BORROW_ORDER
+  add constraint GEC_BORROW_ORDER_FK2 foreign key (ASSET_ID)
+  references GEC_ASSET (ASSET_ID);  
+ 
+alter table GEC_BORROW_ORDER
+  add ( constraint GEC_BORROW_ORDER_UK unique (LOG_NUMBER)  USING INDEX TABLESPACE  GEC);    
+
+create index GEC_BORROW_ORDER_IDX1 on GEC_BORROW_ORDER (BORROW_REQUEST_ID) TABLESPACE GEC;

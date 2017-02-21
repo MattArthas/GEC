@@ -1,0 +1,12 @@
+create table GEC_COLLATERAL_TYPE_AUD
+(
+  DISPLAY_ORDER   NUMBER(3),
+  COLLATERAL_TYPE_ID      NUMBER(10),
+  COLLATERAL_TYPE         VARCHAR2(4),
+  DESCRIPTION             VARCHAR2(50),
+  LAST_UPDATED_BY         VARCHAR2(64),
+  LAST_UPDATED_AT         DATE,
+  OP_CODE                 CHAR(1)
+)
+tablespace GEC;
+
